@@ -2,6 +2,7 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
+use crate::logic::error::LogicError;
 
 #[derive(EnumIter, Copy, Clone, Debug)]
 pub enum Suit {
@@ -24,7 +25,7 @@ impl Suit {
 
 pub struct Card {
     pub value: i32,
-    pub suit: Suit
+    pub suit: Suit,
 }
 
 pub struct Deck {
@@ -45,5 +46,12 @@ impl Deck {
             }
         }
         self.cards.shuffle(&mut thread_rng());
+    }
+
+    pub fn draw(&mut self) -> Result<Card, LogicError> {
+        match self.cards.pop() {
+            Some(card) => Ok(card),
+            None => Err(LogicError::DeckEmptyError),
+        }
     }
 }
