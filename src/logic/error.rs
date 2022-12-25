@@ -1,5 +1,5 @@
 #[derive(thiserror::Error, Debug)]
 pub enum LogicError {
-    #[error("No more cards in deck")]
-    DeckEmptyError
+    #[error("Generic logic error: {0}")]
+    Generic(String),
 }

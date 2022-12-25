@@ -1,10 +1,14 @@
+use std::borrow::Borrow;
+use std::collections::HashMap;
+use std::ops::Deref;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use crate::logic::error::LogicError;
+use crate::logic::player::Player;
 
-#[derive(EnumIter, Copy, Clone, Debug)]
+#[derive(EnumIter, Copy, Clone, Debug, Hash, PartialEq, Eq)]
 pub enum Suit {
     Spades,
     Clubs,
@@ -23,6 +27,7 @@ impl Suit {
     }
 }
 
+#[derive(Hash, Eq, PartialEq, Clone)]
 pub struct Card {
     pub value: i32,
     pub suit: Suit,
@@ -48,10 +53,28 @@ impl Deck {
         self.cards.shuffle(&mut thread_rng());
     }
 
-    pub fn draw(&mut self) -> Result<Card, LogicError> {
-        match self.cards.pop() {
-            Some(card) => Ok(card),
-            None => Err(LogicError::DeckEmptyError),
+    pub fn draw(&mut self) -> Option<Card> {
+        self.cards.pop()
+    }
+}
+
+pub struct Table {
+    table: HashMap<Player, Option<Card>>,
+}
+
+impl Table {
+    pub fn new(players: [Player; 4]) -> Table {
+        let mut hashmap = HashMap::new();
+        for player in players {
+            hashmap.insert(player, None);
+        }
+
+        Table { table: hashmap }
+    }
+
+    pub fn place_card(&mut self, player: Player, card: Card) {
+        if self.table.contains_key(&player) {
+            self.table.insert(player, Some(card));
         }
     }
 }

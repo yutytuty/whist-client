@@ -1,3 +1,4 @@
-#[allow(unused)] // temp
-mod deck;
+#![allow(unused)] // temp
+mod table;
+mod player;
 mod error;
