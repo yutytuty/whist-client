@@ -39,10 +39,13 @@ impl Player {
 
 #[cfg(test)]
 pub mod tests {
-    use super::*;
-    use crate::logic::table::Suit;
-    use lazy_static::lazy_static;
     use std::collections::HashMap;
+
+    use lazy_static::lazy_static;
+
+    use crate::logic::table::Suit;
+
+    use super::*;
 
     lazy_static! {
         pub static ref TEST_PLAYER_1: Player = Player {

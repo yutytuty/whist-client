@@ -1,12 +1,14 @@
-use crate::logic::error::LogicError;
-use crate::logic::player::Player;
-use rand::seq::SliceRandom;
-use rand::thread_rng;
 use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::ops::Deref;
+
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
+
+use crate::logic::error::LogicError;
+use crate::logic::player::Player;
 
 #[derive(EnumIter, Copy, Clone, Debug, Hash, PartialEq, Eq)]
 pub enum Suit {
@@ -126,8 +128,9 @@ impl Table {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::logic::player::tests::*;
+
+    use super::*;
 
     #[test]
     fn test_is_greater() {
