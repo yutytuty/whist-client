@@ -18,13 +18,12 @@ impl ClientPacket {
             return None;
         }
         let value = i32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]);
-        let suit = match Suit::from_be_bytes([bytes[4]]) {
-            Some(suit) => suit,
-            None => return None,
-        };
-        Some(ClientPacket {
-            card: Card { value, suit },
-        })
+        match Suit::from_be_bytes([bytes[4]]) {
+            Some(suit) => Some(ClientPacket {
+                card: Card { value, suit },
+            }),
+            None => None,
+        }
     }
 }
 
