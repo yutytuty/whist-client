@@ -26,6 +26,20 @@ impl Suit {
         }
         .to_string()
     }
+
+    pub fn to_be_bytes(&self) -> [u8; 1] {
+        (*self as u8).to_be_bytes()
+    }
+
+    pub fn from_be_bytes(bytes: [u8; 1]) -> Option<Self> {
+        match u8::from_be_bytes(bytes) {
+            4 => Some(Suit::Spades),
+            3 => Some(Suit::Hearts),
+            2 => Some(Suit::Diamonds),
+            1 => Some(Suit::Clubs),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Debug, Hash, Eq, PartialEq, Clone)]
