@@ -1,36 +1,50 @@
+use crate::logic::error::LogicError;
+use crate::logic::player::Player;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::ops::Deref;
-use rand::seq::SliceRandom;
-use rand::thread_rng;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use crate::logic::error::LogicError;
-use crate::logic::player::Player;
 
 #[derive(EnumIter, Copy, Clone, Debug, Hash, PartialEq, Eq)]
 pub enum Suit {
-    Spades,
-    Clubs,
-    Hearts,
-    Diamonds,
+    Spades = 4,
+    Hearts = 3,
+    Diamonds = 2,
+    Clubs = 1,
 }
 
 impl Suit {
     pub fn to_string(&self) -> String {
         match *self {
             Suit::Spades => "Spades",
-            Suit::Clubs => "Clubs",
             Suit::Hearts => "Hearts",
-            Suit::Diamonds => "Diamonds"
-        }.to_string()
+            Suit::Diamonds => "Diamonds",
+            Suit::Clubs => "Clubs",
+        }
+        .to_string()
     }
 }
 
-#[derive(Hash, Eq, PartialEq, Clone)]
+#[derive(Debug, Hash, Eq, PartialEq, Clone)]
 pub struct Card {
     pub value: i32,
     pub suit: Suit,
+}
+
+impl Card {
+    pub fn is_greater(&self, other: &Card) -> bool {
+        if self.value == other.value {
+            return self.suit as u8 > other.suit as u8;
+        }
+        self.value > other.value
+    }
+
+    pub fn to_string(&self) -> String {
+        String::from(format!("{} of {}", self.value, self.suit.to_string()))
+    }
 }
 
 pub struct Deck {
@@ -76,5 +90,80 @@ impl Table {
         if self.table.contains_key(&player) {
             self.table.insert(player, Some(card));
         }
+    }
+
+    pub fn strongest_card_holder(&self) -> Option<Player> {
+        let mut strongest_player = None;
+        let mut strongest_card = None;
+        for (player, card) in self.table.iter() {
+            if let (Some(strongest_card_to_test), Some(current_card)) = (strongest_card, card) {
+                if current_card.is_greater(strongest_card_to_test) {
+                    strongest_card = Some(current_card);
+                    strongest_player = Some(player.clone());
+                }
+            } else {
+                strongest_card = Option::from(card);
+                strongest_player = Some(player.clone());
+            }
+        }
+        strongest_player
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::logic::player::tests::*;
+
+    #[test]
+    fn test_is_greater() {
+        let card_1 = Card {
+            value: 5,
+            suit: Suit::Spades,
+        };
+        let card_2 = Card {
+            value: 5,
+            suit: Suit::Hearts,
+        };
+        let card_3 = Card {
+            value: 6,
+            suit: Suit::Spades,
+        };
+        let card_4 = Card {
+            value: 4,
+            suit: Suit::Spades,
+        };
+        let card_5 = Card {
+            value: 5,
+            suit: Suit::Clubs,
+        };
+
+        assert!(card_1.is_greater(&card_2));
+        assert!(card_3.is_greater(&card_1));
+        assert!(!card_1.is_greater(&card_3));
+        assert!(card_1.is_greater(&card_4));
+        assert!(card_2.is_greater(&card_5));
+    }
+
+    #[test]
+    fn test_strongest_card_holder() {
+        let mut players = [
+            TEST_PLAYER_1.clone(),
+            TEST_PLAYER_2.clone(),
+            TEST_PLAYER_3.clone(),
+            TEST_PLAYER_4.clone(),
+        ];
+        let mut table = Table::new([
+            TEST_PLAYER_1.clone(),
+            TEST_PLAYER_2.clone(),
+            TEST_PLAYER_3.clone(),
+            TEST_PLAYER_4.clone(),
+        ]);
+
+        for mut player in players {
+            player.play_card_from_hand(&mut table, 0);
+        }
+
+        assert_eq!(table.strongest_card_holder(), Some(TEST_PLAYER_3.clone()));
     }
 }
