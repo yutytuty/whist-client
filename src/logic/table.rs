@@ -94,7 +94,6 @@ pub struct Table {
 
 impl Table {
     pub fn new(players: [Player; 4]) -> Table {
-
         let mut hashmap = HashMap::new();
         for player in players {
             hashmap.insert(player, None);
