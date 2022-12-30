@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Whist.iml" filepath="$PROJECT_DIR$/Whist.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../WhistServer/WhistServer.iml" filepath="$PROJECT_DIR$/../WhistServer/WhistServer.iml" />
     </modules>
   </component>
 </project>
